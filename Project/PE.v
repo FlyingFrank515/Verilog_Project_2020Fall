@@ -1,5 +1,6 @@
 // module: PE(processing element)
 // function of this module:
+// finish one calculation of one node in Smith-Waterman Algorithm and going down 
 
 `include "LUT.v"
 `include "MAX.v"
@@ -7,22 +8,23 @@
 module PE(clk,  rst, changeS_in,  S_in,   T_in,   MAX_in,     V_in,   F_in,   init_in,
                      changeS_out,         T_out,  MAX_out,    V_out,  F_out,  init_out);
     // declartion of input and output
-    input           clk;
-    input           rst;
-    input           changeS_in;
-    input [1:0]     S_in;
-    input [1:0]     T_in;
-    input [11:0]    MAX_in;
-    input [11:0]    V_in;
-    input [11:0]    F_in;
-    input           init_in;
+    input           clk;            // clk signal
+    input           rst;            // reset signal
+    input           changeS_in;     // control whether S in PE should be changed
+                                    // change when this PE change its column
+    input [1:0]     S_in;           // input data of S(not need to be used)
+    input [1:0]     T_in;           // input data of T
+    input [11:0]    MAX_in;         // MAX of previous PE
+    input [11:0]    V_in;           // input data of V
+    input [11:0]    F_in;           // input data of F
+    input           init_in;        // determine whether this PE is working
     
-    output reg          changeS_out;
-    output reg [1:0]    T_out;
-    output reg [11:0]   MAX_out;
-    output reg [11:0]   V_out;
-    output reg [11:0]   F_out;
-    output reg          init_out;
+    output reg          changeS_out;// transmit changeS to next PE
+    output reg [1:0]    T_out;      // transmit T to next PR
+    output reg [11:0]   MAX_out;    // transmit MAX in this PE to next PE
+    output reg [11:0]   V_out;      // transmit V in this PE to next PE
+    output reg [11:0]   F_out;      // transmit F in this PE to next PE
+    output reg          init_out;   // transmit init in this PE to next PE
     
     // declartion of reg and wire
     wire [1:0]  S_signal;
@@ -113,8 +115,8 @@ module PE(clk,  rst, changeS_in,  S_in,   T_in,   MAX_in,     V_in,   F_in,   in
                 T_out   <= T_in;
                 MAX_out <= MO2;
                 E_out   <= MO3;
-                V_out   <= V_signal;
                 F_out   <= MO4;
+                V_out   <= V_signal;
                 init_out<= init_in;
                 changeS_out <= changeS_in;
             end
@@ -123,9 +125,9 @@ module PE(clk,  rst, changeS_in,  S_in,   T_in,   MAX_in,     V_in,   F_in,   in
                 S_out   <= S_signal;
                 T_out   <= T_in;
                 MAX_out <= 0;
-                E_out   <= 12'b100100000000;
+                E_out   <= 12'b100100000000; // aproxiamately -INF
+                F_out   <= 12'b100100000000; // aproxiamately -INF
                 V_out   <= 0;
-                F_out   <= 12'b100100000000;
                 init_out<= init_in;
                 changeS_out <= changeS_in;
             end

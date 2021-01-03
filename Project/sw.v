@@ -29,13 +29,13 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
     reg             init,      next_init;
     reg             changeS,   next_changeS;
 
-    // input for first PE
+    // --- input for first PE ---
     wire [1:0]      S_in;
     wire [1:0]      T_in;
     wire [11:0]     V_in;
     wire [11:0]     F_in;
     
-    // inner wire of PE
+    // --- inner wire of PE ---
     wire  [1:0]     T_bus       [127:0];
     wire [11:0]     MAX_bus     [127:0];
     wire [11:0]     V_bus       [127:0];
@@ -47,7 +47,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
     // combinational part
 
     BUFFER BUF(
-        // input
+        // inputs
         .clk(clk),
         .rst(reset),
         .valid(valid),
@@ -57,21 +57,21 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
         .data_V_last(V_bus[127]),
         .data_F_last(F_bus[127]),
 
-        // output
+        // outputs
         .data_t_o(T_in),
         .V_o(V_in),
         .F_o(F_in)
     );
 
     BUFFER_S BUF_S(
-        // input
+        // inputs
         .clk(clk),
         .rst(reset),
         .valid(valid),
         .count(count),
         .data_s_i(data_s),
         
-        // output
+        // outputs
         .data_s_o(S_in)
     );
     
@@ -80,7 +80,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
         for(i = 0; i < 128 ; i = i+1) begin
             if(i == 0) begin
                 PE P0(
-                    // input
+                    // inputs
                     .clk(clk),
                     .rst(reset),
                     .changeS_in(changeS),
@@ -91,7 +91,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
                     .F_in(F_in),
                     .init_in(init),
                     
-                    // output
+                    // outputs
                     .changeS_out(changeS_bus[i]),
                     .T_out(T_bus[i]),
                     .MAX_out(MAX_bus[i]),
@@ -102,7 +102,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
             end
             else begin
                 PE Pi(
-                    // input
+                    // inputs
                     .clk(clk),
                     .rst(reset),
                     .changeS_in(changeS_bus[i-1]),
@@ -113,7 +113,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
                     .F_in(F_bus[i-1]),
                     .init_in(init_bus[i-1]),
                     
-                    //output
+                    //outputs
                     .changeS_out(changeS_bus[i]),
                     .T_out(T_bus[i]),
                     .MAX_out(MAX_bus[i]),
@@ -125,6 +125,9 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
         end
     endgenerate
     
+    // The last MAX_bus and V_bus need to be compared at the end
+    // because in the serial PE, the work above will be done in next stage of PE
+    // However, last PE doesnt have PE in its next stage, so we should do it manually
     MAX M_final(max, MAX_bus[127], V_bus[127]);
 
     always@(*) begin

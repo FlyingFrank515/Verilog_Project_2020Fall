@@ -1,4 +1,6 @@
-// this module will pass the value of T, V, F in smithwaterman algorithm
+// module: BUFFER_TVF
+// function of this module:
+// pass the value of T, V, F in smithwaterman algorithm
 
 module BUFFER(
     input clk,
