@@ -29,6 +29,9 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
     reg             init,      next_init;
     reg             changeS,   next_changeS;
 
+    wire [11:0]     next_max_recursive;
+    reg  [11:0]     max_recursive;
+
     // --- input for first PE ---
     wire [1:0]      S_in;
     wire [1:0]      T_in;
@@ -86,7 +89,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
                     .changeS_in(changeS),
                     .S_in(S_in),
                     .T_in(T_in),
-                    .MAX_in(0),
+                    .MAX_in(12'd0),
                     .V_in(V_in),
                     .F_in(F_in),
                     .init_in(init),
@@ -125,10 +128,14 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
         end
     endgenerate
     
+    // Outer MAX module
+    // Use only 5 MAX in the PE, so need a outer MAX
+    MAX M_recursive(next_max_recursive, MAX_bus[127], max_recursive);
+    
     // The last MAX_bus and V_bus need to be compared at the end
     // because in the serial PE, the work above will be done in next stage of PE
     // However, last PE doesnt have PE in its next stage, so we should do it manually
-    MAX M_final(max, MAX_bus[127], V_bus[127]);
+    MAX M_final(max, max_recursive, V_bus[127]);
 
     always@(*) begin
         next_state = state;
@@ -183,6 +190,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
             count <= 0;
             init <= 0;
             changeS <= 0;
+            max_recursive <= 0;
         end
         else begin
             state <= next_state;
@@ -190,6 +198,7 @@ module sw(clk, reset, valid, data_s, data_t, finish, max);
             count <= next_count;
             init <= next_init;
             changeS <= next_changeS;
+            max_recursive <= next_max_recursive;         
         end
     end
 

@@ -68,11 +68,11 @@ module PE(clk,  rst, changeS_in,  S_in,   T_in,   MAX_in,     V_in,   F_in,   in
         .A      (MAX_in),
         .B      (V_out)
     );
-    MAX M2(
-        .OUTPUT (MO2), 
-        .A      (MO1),
-        .B      (MAX_out)
-    );
+    // MAX M2(
+    //     .OUTPUT (MO2), 
+    //     .A      (MO1),
+    //     .B      (MAX_out)
+    // );
     MAX M3(
         .OUTPUT (MO3), 
         .A      (E_out_minus_beta),
@@ -113,7 +113,7 @@ module PE(clk,  rst, changeS_in,  S_in,   T_in,   MAX_in,     V_in,   F_in,   in
                 V_diag  <= V_in;
                 S_out   <= S_signal;
                 T_out   <= T_in;
-                MAX_out <= MO2;
+                MAX_out <= MO1;
                 E_out   <= MO3;
                 F_out   <= MO4;
                 V_out   <= V_signal;
