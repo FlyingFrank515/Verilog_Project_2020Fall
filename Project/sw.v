@@ -1,7 +1,6 @@
 `include "BUFFER_TVF.v"
 `include "PE.v"
 `include "BUFFER_S.v"
-`include "MAX.v"
 
 module sw(clk, reset, valid, data_s, data_t, finish, max);
     
