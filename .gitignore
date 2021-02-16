@@ -2,7 +2,7 @@ report.doc
 report.pdf
 Lecture
 SmithWaterman
-.synopsys_dc_setup
+.synopsys_dc.setup
 *.zip
 *.tcl
 dat
