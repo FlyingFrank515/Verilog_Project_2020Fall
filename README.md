@@ -14,8 +14,12 @@ Due to the capability of parallel accessing, using hardware can reduct the time 
 ### Parallelization ###
 Every node can be assigned value when it’s upper, left, upper left nodes have value. So we can access nodes from left-up to right-down using PE array.
 
+![](Project/parallel.png)
+
 ### PE(Processing array) ###
 Combine PEs to form PE array.
+
+![](Project/PE.png)
 
 ### not enough PE? ###
 When the number of PEs is less than the length sequence, We have to design an **Internal Buffer** to record boundary value and run iteratively. 
